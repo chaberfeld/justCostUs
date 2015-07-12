@@ -1,0 +1,255 @@
+<head>
+
+  <title>JustCost.Us</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Montserrat">
+  
+</head>
+
+<!-- Get GPS -->
+
+<body onload="setGPS()">
+
+<!-- Constant top -->
+ 
+	<header>
+  		<h2>JustCost.Us
+  			<button type="button" class="btn btn-default btn-m btn0">
+  				<span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span> 
+			</button>
+		</h2>
+	</header>
+
+
+<!-- Insert variable screen -->  	
+
+{{> Template.dynamic template=template_name }} 	
+
+</body>
+
+<!--   Template  a00     -->
+
+<template name="a00">
+	<div class="container">
+  		
+  		<div class="row text1">
+  			Share your purchase !
+  		</div>
+
+  		<div class="row">
+			<button type="button" class="btn btn-default btn1 b01">Food</button>
+		  	<button type="button" class="btn btn-default btn1 b02">Drink</button>
+		  	<button type="button" class="btn btn-default btn1 b03">Dining</button>
+		  	<button type="button" class="btn btn-default btn1 b04">Cars</button>
+		</div>
+
+		<div class="row">
+		  	<button type="button" class="btn btn-default btn1 b05">Fuel</button>
+		  	<button type="button" class="btn btn-default btn1 b06">Service</button>
+		  	<button type="button" class="btn btn-default btn1 b07">Gadgets</button>
+		  	<button type="button" class="btn btn-default btn1 b08">Clothing</button>
+		</div>
+
+		<div class="row">
+		  	<button type="button" class="btn btn-default btn1 b09">Maj Aps</button>
+		 	<button type="button" class="btn btn-default btn1 b10">Repair</button>
+		 	<button type="button" class="btn btn-default btn1 b11">Transport</button>
+		 	<button type="button" class="btn btn-default btn1 b12">Parts</button>
+		</div>
+
+		<div class="row">
+		  	<button type="button" class="btn btn-default btn1 b13">Housing</button>
+		 	<button type="button" class="btn btn-default btn1 b14">Home</button>
+		 	<button type="button" class="btn btn-default btn1 b15">Exercise</button>
+		 	<button type="button" class="btn btn-default btn1 b16">Other</button>
+		</div>
+
+	</div>
+
+ 	<p id="demo"></p>	
+
+ 	<footer>
+		<div class="container">
+
+			<div class="row text1">
+  				Ask your neighbors !
+  			</div>
+
+			<nav class="navbar navbar-default">
+		    	<div class="row">
+		      		
+		      		<form class="navbar-form navbar-left form-inline" role="search">
+		        		<div class="form-group">
+
+		        			<div class="row">
+  								<div class="col-sm-12">
+    								<div class="input-group">
+      									<span class="input-group-btn">
+        									<button class="btn btn-default btn5" type="submit">
+        									<span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+      									</span>
+      									<input type="text" name="searchInp" class="form-control input1" placeholder="Search">
+    								</div><!-- /input-group -->
+  								</div><!-- /.col-lg-6 -->
+  
+							</div><!-- /.row -->
+		  	
+		          			<!--input type="text" name="searchInp" class="form-control input1" placeholder="Search>>>">
+		          			<button type="submit" class="btn btn-default btn-sm btn5">
+  								<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+							</button-->
+			
+							<!--div class="col-lg-6">
+							    <div class="input-group">
+							      <input type="text" name="searchInp" class="form-control input1" placeholder="Search for...">
+							      <span class="glyphicon glyphicon-search">
+							        <button class="btn btn-default btn5" type="button"></button>
+							      </span>
+							    </div><!- /input-group -->
+							<!--/div--><!-- /.col-lg-6 -->
+
+		        		</div>       
+		      		</form>
+
+				</div>
+
+		    	<div class="panel panel-default panel1">
+  					<div class="panel-body">
+    					<!--Ad space for: <span id="holder"></span-->
+    					Ad space for: {{address}}
+					</div>
+		     	</div>
+
+			</nav>
+
+		</div>
+	</footer>
+
+	<!-- Geolocation scripts [keep at bottom of "a00"]-->
+	<script>
+
+	var x=document.getElementById("demo");
+
+	function setGPS() {
+		if (Session.get("addressFull") == null) {
+			getLocation();
+		}
+	}
+
+	function getLocation() {
+ 		if (navigator.geolocation) {
+    	navigator.geolocation.getCurrentPosition(showPosition);
+  		} else { 
+    	x.innerHTML="Geolocation is not supported by this browser.";
+  		}
+	}
+
+	function showPosition(position) {
+  		x.innerHTML="Latitude: " + position.coords.latitude + " Longitude: " 
+  		+ position.coords.longitude;
+
+ 		Session.set("lat",position.coords.latitude);
+ 		Session.set("lon",position.coords.longitude);
+
+		var myXML = "";
+		var request = new XMLHttpRequest();
+
+		var str1 = "http://maps.googleapis.com/maps/api/geocode/xml?latlng=";
+		var str2 = Session.get("lat");
+		var str3 = Session.get("lon");
+		var str4 = "&sensor=true";
+		var url =(str1+str2+","+str3+str4);
+		request.open("GET", url, true);
+		request.onreadystatechange = function() {
+    		if (request.readyState == 4) {
+        		if (request.status == 200 || request.status == 0) {
+	            	myXML = request.responseXML;
+	            	x0 = myXML.getElementsByTagName("formatted_address")[0];
+	            	x1 = myXML.getElementsByTagName("long_name")[2];
+	            	x2 = myXML.getElementsByTagName("short_name")[4];
+	      			y0 = x0.childNodes[0];
+	      			y1 = x1.childNodes[0];
+	      			y2 = x2.childNodes[0];
+	      			var addressFull = y0.nodeValue;
+	      			var addressTown = y1.nodeValue;
+	      			var addressStateCd = y2.nodeValue;
+	      			Session.set("addressFull",addressFull);
+	      			Session.set("addressTown",addressTown);
+	      			Session.set("addressState",addressStateCd);
+	
+	       		}
+    		}
+		}
+	request.send();
+
+	// end showLocation()
+	};
+ 
+	</script>  
+</template>
+
+<!--   Template b00   -->
+<template name="b00">
+
+  	<p class="catbar"> 
+ 		{{catlong}}
+	</p>
+
+	<button type="button" class="btn btn-default btn-m btn3">
+  		<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span> 
+	</button>
+
+		<form class="navbar-form navbar-left" role="search">
+  			<div class="form-group">
+  				<p class="questions q1">What price did you pay ?
+    				<input type="text" name="price" class="form-control" placeholder="{{eg1}}">
+    			</p>
+    			<p class="questions q2">Where was it purchased ?
+    				<input type="text" name="where" class="form-control" placeholder="{{eg2}}">
+    			</p>
+    			<p class="questions q3">Some details (make it searchable!)
+    				<input type="text" name="detail" class="form-control" placeholder="{{eg3}}">
+    			</p>
+    			<br>
+  			
+  				<button type="submit" class="btn btn-default btn2">Submit</button>
+  					<p class="error">{{missing}}</p>
+  			</div>
+		</form>
+
+</template>
+
+<!--   Template c00   -->
+<template name="c00">
+
+  	<p class="searchbar"> 
+ 		{{searchword}}
+	</p>
+
+	<button type="button" class="btn btn-default btn-m btn4">
+  		<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span> 
+	</button>
+
+	{{#each purchase}}
+	<!--console.log({{searchable}})  -->
+			<!--li class="player {{selectedClass}}">{{name}}:{{age}}</li-->
+
+			<div class="panel panel-default">
+  				<div class="panel-heading"> {{townState}} - 0 days ago</div>
+  				<div class="panel-body"> {{searchable}} </div>
+			</div>
+	{{/each}}
+
+	<!--div class="panel panel-default">
+  				<div class="panel-heading">Hamden, CT  2 days ago (anon)</div>
+  				<div class="panel-body">
+   					(cars) pd 600 fm carr ER for 1990 ford taurus 120k mi good transaction really nice people
+  				</div>
+			</div-->
+
+
+
+		
+
+</template>
+
